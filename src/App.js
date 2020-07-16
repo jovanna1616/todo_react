@@ -3,26 +3,22 @@ import React, { Component } from "react";
       {
         id: 1,
         title: "Go to Market",
-        description: "Buy ingredients to prepare dinner",
-        completed: true
+        description: "Buy ingredients to prepare dinner"
       },
       {
         id: 2,
         title: "Study",
-        description: "Read Algebra and History textbook for upcoming test",
-        completed: false
+        description: "Read Algebra and History textbook for upcoming test"
       },
       {
         id: 3,
         title: "Sally's books",
-        description: "Go to library to rent sally's books",
-        completed: true
+        description: "Go to library to rent sally's books"
       },
       {
         id: 4,
         title: "Article",
-        description: "Write article on how to use django with react",
-        completed: false
+        description: "Write article on how to use django with react"
       }
     ];
     class App extends Component {
