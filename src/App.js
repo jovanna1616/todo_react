@@ -1,33 +1,63 @@
 import React, { Component } from "react";
+import Modal from './components/Modal'
     const todoItems = [
       {
         id: 1,
         title: "Go to Market",
-        description: "Buy ingredients to prepare dinner"
+        content: "Buy ingredients to prepare dinner"
       },
       {
         id: 2,
         title: "Study",
-        description: "Read Algebra and History textbook for upcoming test"
+        content: "Read Algebra and History textbook for upcoming test"
       },
       {
         id: 3,
         title: "Sally's books",
-        description: "Go to library to rent sally's books"
+        content: "Go to library to rent sally's books"
       },
       {
         id: 4,
         title: "Article",
-        description: "Write article on how to use django with react"
+        content: "Write article on how to use django with react"
       }
     ];
     class App extends Component {
       constructor(props) {
         super(props);
         this.state = {
-          todoList: todoItems
+          todoList: todoItems,
+          modal: false,
+          activeItem: {
+            title: '',
+            content: ''
+          },
         };
       }
+
+      toggle = () => {
+        this.setState({ modal: !this.state.modal });
+      };
+
+      handleSubmit = item => {
+        this.toggle();
+        alert('save' + JSON.stringify(item));
+      };
+
+
+      handleDelete = item => {
+        alert('delete' + JSON.stringify(item));
+      };
+
+      createItem = () => {
+        const item = { title: '', content: '' };
+        this.setState({ activeItem: item, modal: !this.state.modal });
+      };
+
+      editItem = item => {
+        this.setState({ activeItem: item, modal: !this.state.modal });
+      };
+
       renderItems = () => {
         const newItems = this.state.todoList
         return newItems.map(item => (
@@ -37,13 +67,23 @@ import React, { Component } from "react";
           >
             <span
               className="todo-title mr-2"
-              title={item.description}
+              title={item.content}
             >
               {item.title}
             </span>
             <span>
-              <button className="btn btn-secondary mr-2"> Edit </button>
-              <button className="btn btn-danger">Delete </button>
+              <button
+                onClick={() => this.editItem(item)}
+                className="btn btn-secondary mr-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => this.handleDelete(item)}
+                className="btn btn-danger"
+              >
+                Delete
+              </button>
             </span>
           </li>
         ));
@@ -56,7 +96,9 @@ import React, { Component } from "react";
               <div className="col-md-6 col-sm-10 mx-auto p-0">
                 <div className="card p-3">
                   <div className="">
-                    <button className="btn btn-primary">Add task</button>
+                    <button onClick={this.createItem} className="btn btn-primary">
+                      Add task
+                    </button>
                   </div>
                   <ul className="list-group list-group-flush">
                     {this.renderItems()}
@@ -64,6 +106,13 @@ import React, { Component } from "react";
                 </div>
               </div>
             </div>
+            {this.state.modal ? (
+              <Modal
+                activeItem={this.state.activeItem}
+                toggle={this.toggle}
+                onSave={this.handleSubmit}
+              />
+            ) : null}
           </main>
         );
       }
