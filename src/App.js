@@ -29,30 +29,18 @@ import React, { Component } from "react";
       constructor(props) {
         super(props);
         this.state = {
-          viewCompleted: false,
           todoList: todoItems
         };
       }
-      displayCompleted = status => {
-        if (status) {
-          return this.setState({ viewCompleted: true });
-        }
-        return this.setState({ viewCompleted: false });
-      };
       renderItems = () => {
-        const { viewCompleted } = this.state;
-        const newItems = this.state.todoList.filter(
-          item => item.completed == viewCompleted
-        );
+        const newItems = this.state.todoList
         return newItems.map(item => (
           <li
             key={item.id}
             className="list-group-item d-flex justify-content-between align-items-center"
           >
             <span
-              className={`todo-title mr-2 ${
-                this.state.viewCompleted ? "completed-todo" : ""
-              }`}
+              className="todo-title mr-2"
               title={item.description}
             >
               {item.title}
