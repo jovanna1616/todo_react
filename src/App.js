@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import Modal from './components/Modal';
-import LoginForm from './components/LoginForm'
-import { getTodoList, createTodo, updateTodo, deleteTodo } from './services/api-service'
+import NavBar from './components/NavBar'
+import { getTodoList, createTodo, updateTodo, deleteTodo } from './services/todos-api-service'
 import store from './store/todos/reducers/index'
+import authStore from './store/auth/reducers/index'
 import { fetchTodos, addTodo, update, deleteSingleTodo } from './store/todos/actions/actionCreators'
+
 
 class App extends Component {
   constructor(props) {
@@ -15,11 +17,14 @@ class App extends Component {
         title: '',
         content: ''
       },
+      isLoggedIn: false
     };
   }
   
   componentDidMount () {
     this.refreshList();
+    const isLoggedIn = authStore.isLoggedIn
+    this.setState({isLoggedIn})
   }
 
   refreshList = async () => {
@@ -52,9 +57,15 @@ class App extends Component {
       const updatedTodo = await updateTodo(todo)
       store.dispatch(update(updatedTodo))
       this.setState(prevState => {
-        return {
-          todos: [...prevState.todos, updatedTodo]
-        }
+        const todos = prevState.todos.map(todo => {
+          if (todo.id === updatedTodo.id) {
+            todo.title = updatedTodo.title
+            todo.content = updatedTodo.content
+            return todo
+          }
+          return todo
+        })
+        return { todos }
       })
     } catch (error) {
       console.log(error)
@@ -82,6 +93,21 @@ class App extends Component {
 
   renderItems = () => {
     const newItems = this.state.todos
+    let actionButtons
+    if (this.state.isLoggedIn) {
+      actionButtons = (item) => {
+        return <span>
+          <button onClick={() => this.editItem(item)} className="btn btn-secondary mr-2">
+            Edit
+          </button>
+          <button onClick={() => this.handleDelete(item)} className="btn btn-danger">
+            Delete
+          </button>
+        </span>;
+      }
+    } else {
+      actionButtons = () => {}
+    }
     return newItems.map(item => (
       <li
         key={item.id}
@@ -93,38 +119,28 @@ class App extends Component {
         >
           {item.title}
         </span>
-        <span>
-          <button
-            onClick={() => this.editItem(item)}
-            className="btn btn-secondary mr-2"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => this.handleDelete(item)}
-            className="btn btn-danger"
-          >
-            Delete
-          </button>
-        </span>
+        {actionButtons(item)}
       </li>
     ));
   };
-  render() {
+  render () {
+    let addButton
+    if (this.state.isLoggedIn) {
+      addButton = <div className=""><button onClick={this.createItem} className="btn btn-primary">Add task</button></div>
+    } else {
+      addButton = ''
+    }
     return (
       <main className="content">
-        <div style={{background: "white"}}>
-          <LoginForm />
+        {this.props.children}
+        <div style={{ background: "white" }}>
+          <NavBar isLoggedIn={this.state.isLoggedIn} />
         </div>
         <h1 className="text-white text-uppercase text-center my-4">Todo app</h1>
         <div className="row ">
           <div className="col-md-6 col-sm-10 mx-auto p-0">
             <div className="card p-3">
-              <div className="">
-                <button onClick={this.createItem} className="btn btn-primary">
-                  Add task
-                </button>
-              </div>
+              {addButton}
               <ul className="list-group list-group-flush">
                 {this.renderItems()}
               </ul>
@@ -142,4 +158,4 @@ class App extends Component {
     );
   }
 }
-export default App;
+export default App

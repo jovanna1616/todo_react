@@ -1,5 +1,6 @@
 import axios from "axios";
 import config from './config'
+import {getCookie} from './helpers'
 
 export const GET = 'get'
 export const POST = 'post'
@@ -14,6 +15,13 @@ export default function request ({ method, url, data, options }) {
   axios.defaults.xsrfHeaderName = "X-CSRFToken"
   axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   axios.defaults.baseURL = config.api.baseURL
+
+  data = {
+    ...data,
+    'csrfmiddlewaretoken': getCookie('csrftoken')
+  }
+
+
   return axios[method](url, data, options)
     .then((res) => res.data)
     .catch((error) => {
