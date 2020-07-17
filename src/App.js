@@ -3,7 +3,7 @@ import Modal from './components/Modal';
 import LoginForm from './components/LoginForm'
 import { getTodoList, createTodo, updateTodo, deleteTodo } from './services/api-service'
 import store from './store/todos/reducers/index'
-import { fetchTodos } from './store/todos/actions/actionCreators'
+import { fetchTodos, addTodo } from './store/todos/actions/actionCreators'
 
 class App extends Component {
   constructor(props) {
@@ -36,7 +36,13 @@ class App extends Component {
     this.toggle();
     if (!todo.id) {
       try {
-        await createTodo(todo)
+        const newTodo = await createTodo(todo)
+        store.dispatch(addTodo(newTodo))
+        this.setState(prevState => {
+          return {
+            todos: [...prevState.todos, newTodo]
+          }
+        })
       } catch (error) {
         console.log(error)
       }
@@ -64,7 +70,6 @@ class App extends Component {
 
   renderItems = () => {
     const newItems = this.state.todos
-    console.log('RENDER', newItems)
     return newItems.map(item => (
       <li
         key={item.id}

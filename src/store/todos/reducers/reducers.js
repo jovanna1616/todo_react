@@ -12,8 +12,11 @@ function todos (state = [], action) {
         todos: [
           ...state.todos,
           {
-            title: action.title,
-            content: action.content
+            id: action.todo.id,
+            title: action.todo.title,
+            content: action.todo.content,
+            created_at: action.todo.created_at,
+            created_by: action.todo.created_by
           }
         ]
       })
