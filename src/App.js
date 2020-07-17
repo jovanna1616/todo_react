@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import Modal from './components/Modal';
-import { getTodoList, createTodo, updateTodo, deleteTodo } from './todos/actions'
+import LoginForm from './components/LoginForm'
+import { getTodoList, createTodo, updateTodo, deleteTodo } from './services/api-service'
+import store from './store/todos/reducers/index'
+import { fetchTodos } from './store/todos/actions/actionCreators'
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todoList: [],
+      todos: [],
       modal: false,
       activeItem: {
         title: '',
@@ -14,19 +17,16 @@ class App extends Component {
       },
     };
   }
-
-  componentDidMount() {
+  
+  componentDidMount () {
     this.refreshList();
   }
 
-  refreshList = async() => {
-    try {
-      let todoList = await getTodoList()
-      this.setState({ todoList })
-    } catch (error) {
-      console.log(error)
-    }
-  };
+  refreshList = async () => {
+    const todos = await getTodoList();
+    store.dispatch(fetchTodos(todos));
+    this.setState({ todos });
+  }
 
   toggle = () => {
     this.setState({ modal: !this.state.modal });
@@ -63,7 +63,8 @@ class App extends Component {
   };
 
   renderItems = () => {
-    const newItems = this.state.todoList
+    const newItems = this.state.todos
+    console.log('RENDER', newItems)
     return newItems.map(item => (
       <li
         key={item.id}
@@ -95,6 +96,9 @@ class App extends Component {
   render() {
     return (
       <main className="content">
+        <div style={{background: "white"}}>
+          <LoginForm />
+        </div>
         <h1 className="text-white text-uppercase text-center my-4">Todo app</h1>
         <div className="row ">
           <div className="col-md-6 col-sm-10 mx-auto p-0">

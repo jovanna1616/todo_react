@@ -15,7 +15,7 @@ export function createTodo (todo) {
 }
 
 export function updateTodo (todo) {
-    return put(getValueFromEndpoints(ENDPOINTS, 'TODO_URL', 'id', todo.id))
+    return put(getValueFromEndpoints(ENDPOINTS, 'TODO_URL', 'id', todo.id), { title: todo.title, content: todo.content })
 }
 
 export function deleteTodo (todo) {
