@@ -14,14 +14,14 @@ export const addTodo = todo => {
   }
 }
 
-export const updateTodo = todo => {
+export const update = todo => {
   return {
     type: actionTypes.UPDATE_TODO,
     todo
   }
 }
 
-export const deleteTodo = todo => {
+export const deleteSingleTodo = todo => {
   return {
     type: actionTypes.DELETE_TODO,
     todo

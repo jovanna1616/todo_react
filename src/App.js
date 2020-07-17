@@ -3,7 +3,7 @@ import Modal from './components/Modal';
 import LoginForm from './components/LoginForm'
 import { getTodoList, createTodo, updateTodo, deleteTodo } from './services/api-service'
 import store from './store/todos/reducers/index'
-import { fetchTodos, addTodo } from './store/todos/actions/actionCreators'
+import { fetchTodos, addTodo, update, deleteSingleTodo } from './store/todos/actions/actionCreators'
 
 class App extends Component {
   constructor(props) {
@@ -49,14 +49,26 @@ class App extends Component {
       return;
     }
     try {
-      await updateTodo(todo)
+      const updatedTodo = await updateTodo(todo)
+      store.dispatch(update(updatedTodo))
+      this.setState(prevState => {
+        return {
+          todos: [...prevState.todos, updatedTodo]
+        }
+      })
     } catch (error) {
       console.log(error)
     }
   };
 
-  handleDelete = todo => {
-    deleteTodo(todo)
+  handleDelete = todoToDelete => {
+    deleteTodo(todoToDelete)
+    store.dispatch(deleteSingleTodo(todoToDelete))
+    this.setState(prevState => {
+      return {
+        todos: prevState.todos.filter(todo => todo.id !== todoToDelete.id)
+      }
+    })
   };
 
   createItem = () => {

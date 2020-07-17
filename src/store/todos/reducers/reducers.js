@@ -20,6 +20,23 @@ function todos (state = [], action) {
           }
         ]
       })
+    case actionTypes.UPDATE_TODO:
+      return Object.assign({}, state, {
+        todos: state.todos.map(todo => {
+          if (todo.id !== action.todo.id) {
+            return todo
+          }
+
+          return Object.assign({}, todo, {
+            title: action.todo.titile,
+            content: action.todo.content,
+          })
+        })
+      })
+    case actionTypes.DELETE_TODO:
+      return Object.assign({}, state, {
+        todos: state.todos.filter(todo => todo.id !== action.todo.id)
+      })
     default:
       return state
   }
